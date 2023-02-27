@@ -1,3 +1,3 @@
-module pp-tools
+module imagetools
 
 go 1.20

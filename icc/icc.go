@@ -2,10 +2,9 @@ package icc
 
 import (
 	"bytes"
-	"pp-tools/parser/jpeg"
 )
 
-func JpegIccChunk(raw_profile []byte) (*jpeg.JpegGeneralSegment, error) {
+func JpegIccSegment(raw_profile []byte) ([]byte, error) {
 
 	var err error = nil
 
@@ -36,10 +35,5 @@ func JpegIccChunk(raw_profile []byte) (*jpeg.JpegGeneralSegment, error) {
 		return nil, err
 	}
 
-	segment, err := jpeg.NewJpegSegment("APP2", buf.Bytes())
-	if err != nil {
-		return nil, err
-	}
-
-	return segment, nil
+	return buf.Bytes(), nil
 }

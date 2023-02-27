@@ -1,0 +1,10 @@
+go 1.20
+
+use ./image_parser
+
+use ./icc
+
+use (
+	.
+	./operation
+)

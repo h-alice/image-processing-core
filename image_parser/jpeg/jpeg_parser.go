@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"strings"
 )
 
 // Reader interface, for intrnal use only.
@@ -362,19 +361,12 @@ func JpegReadChunk(r Reader) (JpegSegment, error) {
 }
 
 // Return a general JPEGsegment.
-func NewJpegSegment(marker string, data []byte) (*JpegGeneralSegment, error) {
+func NewJpegSegment(marker JpegMarker, data []byte) *JpegGeneralSegment {
 
-	var err error = nil
 	ptr_segment := new(JpegGeneralSegment)
 
 	// Set marker.
-	_marker := [2]byte{'\xFF', '\xFF'}
-	_marker_byte, exists := JpegMarkers[strings.ToUpper(marker)]
-	if !exists {
-		err = fmt.Errorf("no such jpeg marker")
-		return nil, err
-	}
-	_marker[1] = _marker_byte
+	_marker := [2]byte{'\xFF', byte(marker)}
 
 	// Calculate length.
 	var l int = len(data)
@@ -384,8 +376,83 @@ func NewJpegSegment(marker string, data []byte) (*JpegGeneralSegment, error) {
 
 	ptr_segment = &JpegGeneralSegment{
 		signature: _marker,
-		length:    l,
+		length:    (l + 2),
 		data:      &_data,
 	}
-	return ptr_segment, nil
+	return ptr_segment
+}
+
+type ParsedJpeg struct {
+	segments []JpegSegment
+}
+
+func (f ParsedJpeg) WriteTo(w io.Writer) (written int64, err error) {
+	err = nil
+	written = 0
+	for _, _seg := range f.segments {
+		var tmp []byte
+		var _written int64
+		tmp, err = _seg.RawBytes()
+		if err != nil {
+			return
+		}
+		_written, err = io.Copy(w, bytes.NewReader(tmp))
+		written += _written
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+func (f *ParsedJpeg) InsertIccSegment(icc_segment *JpegGeneralSegment) (err error) {
+
+	err = nil
+
+	if icc_segment.marker() != APP2 {
+		err = fmt.Errorf("not an icc segment")
+		return
+	}
+
+	// Insert ICC profile after APP0 and APP1.
+	for index, _seg := range f.segments {
+		if _seg.marker() == SOI || _seg.marker() == APP0 || _seg.marker() == APP1 {
+			continue
+		} else if _seg.marker() == APP2 {
+			return
+		} else {
+			//tmp := make([]JpegSegment, 0)
+			//tmp := append(f.segments[0:index], icc_segment)
+			//tmp = append(tmp, f.segments[index:]...)
+			f.segments = append(f.segments[:index+1], f.segments[index:]...)
+			f.segments[index] = icc_segment
+			break
+		}
+	}
+	return
+}
+
+func ParseJpeg(reader Reader) (*ParsedJpeg, error) {
+
+	var err error = nil
+	var parsed *ParsedJpeg
+	segments := make([]JpegSegment, 0)
+
+	for {
+		var chunk JpegSegment
+
+		chunk, err = JpegReadChunk(reader)
+		if err != nil {
+			return nil, err
+		}
+
+		segments = append(segments, chunk)
+
+		// println(chunk)
+		if IsEndOfImage(chunk) {
+			break
+		}
+	}
+	parsed = &ParsedJpeg{segments: segments}
+	return parsed, nil
 }
