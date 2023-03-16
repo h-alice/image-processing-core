@@ -21,6 +21,7 @@ type OutputOptionConfig operation.EncoderOption
 type OutputConfig struct {
 	Format     string
 	NameSuffix string
+	NamePrefix string
 	Options    *OutputOptionConfig
 }
 
@@ -72,7 +73,7 @@ func generateOutputFileName(input_file string, output_profile *OutputConfig) (st
 		fileSuffix = "." + profile.Format
 
 	}
-	full_file := stem + profile.NameSuffix + fileSuffix
+	full_file := profile.NamePrefix + stem + profile.NameSuffix + fileSuffix
 	return full_file, nil
 }
 
