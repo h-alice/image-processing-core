@@ -1,39 +1,17 @@
 package icc
 
-import (
-	"bytes"
-)
+type IccEmbedder interface {
+	EmbedIccProfile(icc_profile []byte) error
+}
 
-func JpegIccSegment(raw_profile []byte) ([]byte, error) {
+// Embed ICC profile to image.
+func EmbedIccProfile(profile_name string, target IccEmbedder) error {
 
-	var err error = nil
-
-	var buf bytes.Buffer
-
-	_, err = buf.Write([]byte("ICC_PROFILE")) // ICC chunk header.
+	raw_profile_bytes, err := get_icc_profile(profile_name) // Get ICC profile bytes.
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err = buf.WriteByte('\x00') // Null byte
-	if err != nil {
-		return nil, err
-	}
-
-	err = buf.WriteByte('\x01') // NOTE: Profile chunk number.
-	if err != nil {
-		return nil, err
-	}
-
-	err = buf.WriteByte('\x01') // NOTE: Profile chunk number.
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = buf.Write(raw_profile) // Profile content.
-	if err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
+	err = target.EmbedIccProfile(raw_profile_bytes) // Embed ICC profile to target image.
+	return err
 }

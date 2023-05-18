@@ -2,18 +2,14 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"icc"
-	"image"
-	"image_parser/jpeg"
+	"imagetools/config"
+	conf "imagetools/config"
 	"io"
 	"log"
-	"operation"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type OutputOptionConfig operation.EncoderOption
@@ -224,79 +220,84 @@ func main() {
 	flag.Parse()
 
 	// If path not specified, load defaultprofile from home directory.
-	profile_path := *ptr_config_path
+	config_path := *ptr_config_path
 	if *ptr_config_path == "" {
 
 		log.Printf("[!] Using default config file.")
 
 		var err error
-		profile_path, err = defaultProfileFilePath("default")
+		config_path, err = defaultProfileFilePath("default")
 		if err != nil {
 			log.Fatalf("[x] Error while getting default config: %s\n", err)
 		}
 	}
 
-	raw_config, err := os.ReadFile(profile_path)
+	conf, err := conf.ConfigLoader(config_path)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("[x] Cannot load config file: %s\n", err)
 	}
 
-	// Converting JSON to config structure.
-	var conf ConfigFile
-	err = json.Unmarshal(raw_config, &conf)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	for _, f := range flag.Args() { // Iterate through input images.
 
-	for _, f := range flag.Args() {
-		for _, pf := range conf.Profiles {
+		raw_bytes, err := os.ReadFile(f)
+		if err != nil {
+			log.Printf("[x] Error while reading file: %s\n", err)
+			continue
+		}
 
-			var raw_bytes []byte
-			raw_bytes, err = os.ReadFile(f)
-			if err != nil {
-				log.Println(err)
-				continue
-			}
+		tasks := make(chan struct{}, len(conf.Profiles))
+		for _, pf := range conf.Profiles { // Apply all profile to input image.
 
-			var outputbuf bytes.Buffer
-			err = processFile(&outputbuf, bytes.NewBuffer(raw_bytes), pf)
+			go func(pf config.ProfileConfig) {
 
-			if err != nil {
-				log.Fatalln(err)
-			}
+				// TODO: Output dir.
+				output_dir := filepath.Dir(f)
+				if pf.Output == nil {
+					log.Println("[x] No output section.")
+					return
+				}
 
-			// TODO: Output dir.
-			output_dir := filepath.Dir(f)
-			outfile_name, err := generateOutputFileName(f, pf.Output)
-			if err != nil {
-				log.Fatalln(err)
-			}
+				outfile_name := pf.Output.GenerateFileName(f)
 
-			output_full_path := filepath.Join(output_dir, outfile_name)
-			ofp, err := os.OpenFile(output_full_path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-			defer func() {
-				ofp.Close()
-			}()
+				outputbuf := bytes.NewBuffer([]byte{})
+				err = pf.ProcessFile(outputbuf, bytes.NewBuffer(raw_bytes))
+				if err != nil {
+					log.Printf("[x] An error occurred while processing image: %s\n", err)
+					return
+				}
 
-			if err != nil {
-				log.Fatalln(err)
-			}
-			fmt.Printf("Writing output %s -> %s [%s]\n", f, output_full_path, pf.Profile)
+				output_full_path := filepath.Join(output_dir, outfile_name)
+				ofp, err := os.OpenFile(output_full_path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+				defer func() {
+					ofp.Close()
+				}()
 
-			output_length := outputbuf.Len()
+				if err != nil {
+					log.Fatalln(err)
+				}
+				fmt.Printf("Writing output %s -> %s [%s]\n", f, output_full_path, pf.ProfileName)
 
-			written, err := io.Copy(ofp, &outputbuf)
+				output_length := outputbuf.Len()
 
-			if err != nil {
-				log.Fatalln(err)
-			} else if written != int64(output_length) {
-				err = fmt.Errorf("written length mismatch")
-				log.Fatal(err)
-			}
+				written, err := io.Copy(ofp, outputbuf)
+
+				if err != nil {
+					log.Fatalln(err)
+				} else if written != int64(output_length) {
+					err = fmt.Errorf("written length mismatch")
+					log.Fatal(err)
+				}
+
+				tasks <- struct{}{}
+			}(pf)
 
 		}
-	}
 
+		for i := 0; i < len(conf.Profiles); i++ {
+			log.Println(i)
+			<-tasks
+		}
+	}
 }
 
 var default_profile string = `{"profiles": []}`
