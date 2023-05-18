@@ -118,7 +118,7 @@ func decodeProfile(encoded_profile string) ([]byte, error) {
 }
 
 // Get profile by name.
-func GetEmbeddedProfile(profile_name string) ([]byte, error) {
+func get_icc_profile(profile_name string) ([]byte, error) {
 	var err error = nil
 	var raw_profile []byte = nil
 
@@ -150,8 +150,4 @@ func GetEmbeddedProfile(profile_name string) ([]byte, error) {
 func validateProfile(raw_profile []byte) bool {
 	length := binary.BigEndian.Uint32(raw_profile[0:4])
 	return uint32(len(raw_profile)) == length
-}
-
-func main() {
-
 }
