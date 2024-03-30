@@ -122,36 +122,3 @@ func ResizeImageByFactor(algo string, factor float32) Operation {
 		return CurrentProcessingImage{Image: resizedImage, isBinaryData: false}, nil
 	}
 }
-
-/*
-func main() {
-	var err error
-
-	path := `C:\Users\h-alice\Desktop\pp-tools\resource\test2.jpg`
-	path2 := `C:\Users\h-alice\Desktop\test2_.jpg`
-
-	input, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	reader := bytes.NewReader(input)
-
-	im, err := jpeg.Decode(reader)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	jpeg_opt := jpeg.Options{Quality: 100}
-
-	var buf bytes.Buffer
-
-	jpeg.Encode(&buf, canvas, &jpeg_opt)
-
-	output, _ := os.Create(path2)
-	defer output.Close()
-	parser.jpeg
-	io.Copy(output, &buf)
-
-}
-*/
