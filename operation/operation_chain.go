@@ -22,7 +22,7 @@ func (c CurrentProcessingImage) IsBinary() bool {
 	return c.isBinaryData
 }
 
-func (c CurrentProcessingImage) lastError() error {
+func (c CurrentProcessingImage) LastError() error {
 	return c.errorState
 }
 
@@ -47,7 +47,7 @@ type Operation func(currentImage CurrentProcessingImage) (CurrentProcessingImage
 func (currentImage CurrentProcessingImage) Then(operations Operation) CurrentProcessingImage {
 
 	// Check error state.
-	if currentImage.lastError() != nil {
+	if currentImage.LastError() != nil {
 		// Refuse to execute and return the original image.
 		return currentImage
 	}
