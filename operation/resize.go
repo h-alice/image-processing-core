@@ -63,7 +63,7 @@ func (in CurrentProcessingImage) ResizeImageByWidth(algo string, x int) Operatio
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
 		// Input should not be binary data.
-		if in.IsBinary {
+		if in.IsBinary() {
 			// Return error.
 			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
 		}
@@ -72,7 +72,7 @@ func (in CurrentProcessingImage) ResizeImageByWidth(algo string, x int) Operatio
 		factor := float32(in.Image.Bounds().Max.X) / float32(x)
 		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
 		resizedImage := resizeImageInternal(in.Image, algo, boundary)
-		return CurrentProcessingImage{Image: resizedImage, IsBinary: false}, nil
+		return CurrentProcessingImage{Image: resizedImage, isBinaryData: false}, nil
 	}
 }
 
@@ -84,7 +84,7 @@ func (in CurrentProcessingImage) ResizeImageByHeight(algo string, y int) Operati
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
 		// Input should not be binary data.
-		if in.IsBinary {
+		if in.IsBinary() {
 			// Return error.
 			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
 		}
@@ -93,7 +93,7 @@ func (in CurrentProcessingImage) ResizeImageByHeight(algo string, y int) Operati
 		factor := float32(in.Image.Bounds().Max.Y) / float32(y)
 		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
 		resizedImage := resizeImageInternal(in.Image, algo, boundary)
-		return CurrentProcessingImage{Image: resizedImage, IsBinary: false}, nil
+		return CurrentProcessingImage{Image: resizedImage, isBinaryData: false}, nil
 	}
 }
 
@@ -105,7 +105,7 @@ func (in CurrentProcessingImage) ResizeImageByFactor(algo string, factor float32
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
 		// Input should not be binary data.
-		if in.IsBinary {
+		if in.IsBinary() {
 			// Return error.
 			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
 		}
@@ -113,7 +113,7 @@ func (in CurrentProcessingImage) ResizeImageByFactor(algo string, factor float32
 		// Do resize on `image.Image` instance.
 		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
 		resizedImage := resizeImageInternal(in.Image, algo, boundary)
-		return CurrentProcessingImage{Image: resizedImage, IsBinary: false}, nil
+		return CurrentProcessingImage{Image: resizedImage, isBinaryData: false}, nil
 	}
 }
 

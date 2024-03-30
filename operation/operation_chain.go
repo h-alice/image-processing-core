@@ -5,11 +5,18 @@ import (
 	"image"
 )
 
+// The CurrentProcessingImage is a struct that holds the current image data.
+//
+// `isBinaryDate` ia a flag to track if the image is binary data. It should be used internally and should not be modified outside the package.
 type CurrentProcessingImage struct {
 	// Image binary data, or go `image.Image` instance.
-	ImageData []byte
-	Image     image.Image
-	IsBinary  bool
+	ImageData    []byte      // The binary data.
+	Image        image.Image // The `image.Image` instance.
+	isBinaryData bool        // Flag to track if the image is binary data.
+}
+
+func (c CurrentProcessingImage) IsBinary() bool {
+	return c.isBinaryData
 }
 
 // Define errors.
