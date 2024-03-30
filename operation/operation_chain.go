@@ -29,4 +29,17 @@ var (
 // And return `(CurrentProcessingImage, error)` as output.
 type Operation func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error)
 
-//func (currentImage *CurrentProcessingImage) Then()
+// `Then“ method is used to chain operations.
+//
+// Currently every operation will return a new `CurrentProcessingImage` instance.
+// NOTE: In-place operation will be a future enhancement.
+func (currentImage CurrentProcessingImage) Then(operations Operation) CurrentProcessingImage {
+	// Execute operation.
+	newImage, err := operations(currentImage)
+	if err != nil {
+		// Return the original image.
+		return currentImage
+	}
+
+	return newImage
+}
