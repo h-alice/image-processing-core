@@ -101,13 +101,6 @@ func (profile ProfileConfig) ProcessFile(out io.Writer, in io.Reader) error {
 	//	return err
 	//}
 
-	// Do embed ICC
-	//err = profile.DoEmbedIcc(out, &buf)
-	//if err != nil {
-	//	log.Printf("[x] Error while embedding ICC profile: %v", err)
-	//	return err
-	//}
-
 	output_image := working_image.
 		Then(op.Decode()).
 		ThenIf(profile.Resize.Factor != 0.0, op.ResizeImageByFactor(profile.Resize.Algorithm, profile.Resize.Factor)).
@@ -117,12 +110,14 @@ func (profile ProfileConfig) ProcessFile(out io.Writer, in io.Reader) error {
 		ThenIf((profile.Output.Format == "jpeg" || profile.Output.Format == "jpg") && profile.ICC != "", op.EmbedProfile(profile.ICC)) // Supports jpeg only for now, will be extended to other formats.
 
 	if output_image.LastError() != nil {
+		log.Printf("[x] Error while processing image: %v", output_image.LastError())
 		return output_image.LastError()
 	}
 
 	// Write output to writer.
 	output_image.Then(op.WriteImageToWriter(out))
 	if output_image.LastError() != nil {
+		log.Printf("[x] Error while writing image: %v", output_image.LastError())
 		return output_image.LastError()
 	}
 
