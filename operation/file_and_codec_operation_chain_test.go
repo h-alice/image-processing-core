@@ -93,3 +93,25 @@ func TestFileDecoding(t *testing.T) {
 		t.Errorf("Expected image format to be jpeg, got: %v", im_decoded.ImageFormat())
 	}
 }
+
+func TestInvaildDecoding(t *testing.T) {
+	test_txt_relative_path := "./test_resources/.gitignore"
+
+	im, err := CreateImageFromFile(test_txt_relative_path)
+	if err != nil {
+		t.Errorf("Error creating image from file: %v", err)
+	}
+
+	im_decoded := im.Then(Decode())
+
+	// Check image properties.
+	if im_decoded.lastError() == nil {
+		t.Errorf("Expected error, got none")
+	} else {
+		t.Logf("Expected error, got: %v", im_decoded.lastError())
+	}
+
+	if !im_decoded.IsBinary() {
+		t.Errorf("Expected image to be binary data")
+	}
+}

@@ -48,15 +48,16 @@ func (currentImage CurrentProcessingImage) Then(operations Operation) CurrentPro
 
 	// Check error state.
 	if currentImage.lastError() != nil {
-		// Return the original image.
+		// Refuse to execute and return the original image.
 		return currentImage
 	}
 
 	// Execute operation.
 	newImage, err := operations(currentImage)
 	if err != nil {
-		// Return the original image.
-		return currentImage
+		// Return the original image, with error state.
+		newImage.errorState = err
+		return newImage
 	}
 
 	return newImage
