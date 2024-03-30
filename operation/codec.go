@@ -2,7 +2,7 @@ package operation
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 	"image"
 	"strings"
 
@@ -21,6 +21,11 @@ func init() {
 	image.RegisterFormat("jpeg", string(JPEG_HEADER), jpeg.Decode, jpeg.DecodeConfig)
 	image.RegisterFormat("png", string(PNG_HEADER), png.Decode, png.DecodeConfig)
 }
+
+// Define some errors.
+var (
+	ErrEncodingFormatNotSupported = errors.New("encoding format not supported")
+)
 
 type EncoderOption struct {
 	// For JPEG encoder.
@@ -99,7 +104,7 @@ func Encode(format string, opt *EncoderOption) Operation {
 				return currentImage, err
 			}
 		default:
-			err := fmt.Errorf("unsupported format")
+			err := ErrEncodingFormatNotSupported
 			if err != nil {
 				// Change the error state.
 				currentImage.errorState = err
