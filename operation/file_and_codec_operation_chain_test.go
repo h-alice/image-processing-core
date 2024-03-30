@@ -33,8 +33,8 @@ func TestCreateImageFromFile(t *testing.T) {
 		t.Errorf("Expected image to be binary data")
 	}
 
-	if im.lastError() != nil {
-		t.Errorf("Expected no error, got: %v", im.lastError())
+	if im.LastError() != nil {
+		t.Errorf("Expected no error, got: %v", im.LastError())
 	}
 
 	im, err = CreateImageFromFile(test_jpg_relative_path)
@@ -47,8 +47,8 @@ func TestCreateImageFromFile(t *testing.T) {
 		t.Errorf("Expected image to be binary data")
 	}
 
-	if im.lastError() != nil {
-		t.Errorf("Expected no error, got: %v", im.lastError())
+	if im.LastError() != nil {
+		t.Errorf("Expected no error, got: %v", im.LastError())
 	}
 
 }
@@ -62,8 +62,8 @@ func TestFileDecoding(t *testing.T) {
 	im_decoded := im.Then(Decode())
 
 	// Check image properties.
-	if im_decoded.lastError() != nil {
-		t.Errorf("Expected no error, got: %v", im_decoded.lastError())
+	if im_decoded.LastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_decoded.LastError())
 	}
 
 	if im_decoded.IsBinary() {
@@ -81,8 +81,8 @@ func TestFileDecoding(t *testing.T) {
 	im_decoded = im.Then(Decode())
 
 	// Check image properties.
-	if im_decoded.lastError() != nil {
-		t.Errorf("Expected no error, got: %v", im_decoded.lastError())
+	if im_decoded.LastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_decoded.LastError())
 	}
 
 	if im_decoded.IsBinary() {
@@ -105,10 +105,10 @@ func TestInvaildDecoding(t *testing.T) {
 	im_decoded := im.Then(Decode())
 
 	// Check image properties.
-	if im_decoded.lastError() == nil {
+	if im_decoded.LastError() == nil {
 		t.Errorf("Expected error, got none")
 	} else {
-		t.Logf("Expected error, got: %v", im_decoded.lastError())
+		t.Logf("Expected error, got: %v", im_decoded.LastError())
 	}
 
 	if !im_decoded.IsBinary() {
@@ -129,8 +129,8 @@ func TestEncoding(t *testing.T) {
 	im_encoded := im_decoded.Then(Encode("jpg", nil))
 
 	// Check image properties.
-	if im_encoded.lastError() != nil {
-		t.Errorf("Expected no error, got: %v", im_encoded.lastError())
+	if im_encoded.LastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_encoded.LastError())
 	}
 
 	if !im_encoded.IsBinary() {
@@ -151,8 +151,8 @@ func TestEncoding(t *testing.T) {
 	im_encoded = im_decoded.Then(Encode("png", nil))
 
 	// Check image properties.
-	if im_encoded.lastError() != nil {
-		t.Errorf("Expected no error, got: %v", im_encoded.lastError())
+	if im_encoded.LastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_encoded.LastError())
 	}
 
 	if !im_encoded.IsBinary() {
@@ -178,10 +178,10 @@ func TestInvalidEncoding(t *testing.T) {
 	im_encoded := im_decoded.Then(Encode("txt", nil))
 
 	// Check image properties.
-	if im_encoded.lastError() == ErrEncodingFormatNotSupported {
-		t.Logf("Expected error, got: %v", im_encoded.lastError())
+	if im_encoded.LastError() == ErrEncodingFormatNotSupported {
+		t.Logf("Expected error, got: %v", im_encoded.LastError())
 	} else {
-		t.Errorf("Expected error, got: %v", im_encoded.lastError())
+		t.Errorf("Expected error, got: %v", im_encoded.LastError())
 	}
 
 }
