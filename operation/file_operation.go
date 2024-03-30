@@ -86,3 +86,36 @@ func WriteImageToFile(path string) Operation {
 		return currentImage, nil
 	}
 }
+
+// Write image data to writer.
+func WriteImageToWriter(writer io.Writer) Operation {
+	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
+		// Check image format, it should be binary data.
+		if !currentImage.IsBinary() {
+			// Change the error state.
+			currentImage.errorState = ErrOperationNotSupportInImage
+			// Return error.
+			return currentImage, ErrOperationNotSupportInImage
+		}
+
+		// Write to writer.
+		written, err := writer.Write(currentImage.ImageData)
+		if err != nil {
+			// Change the error state.
+			currentImage.errorState = err
+			// Return error.
+			return currentImage, err
+		}
+
+		// Check written length.
+		if written != len(currentImage.ImageData) {
+			// Change the error state.
+			currentImage.errorState = ErrWrittenLengthMismatch
+			// Return error.
+			return currentImage, ErrWrittenLengthMismatch
+		}
+
+		// Return the image.
+		return currentImage, nil
+	}
+}
