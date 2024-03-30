@@ -115,3 +115,53 @@ func TestInvaildDecoding(t *testing.T) {
 		t.Errorf("Expected image to be binary data")
 	}
 }
+
+func TestEncoding(t *testing.T) {
+	test_png_relative_path := "./test_resources/test_ayaya.png"
+	test_jpg_relative_path := "./test_resources/test_ayaya.jpg"
+
+	// Test 1: Read PNG and encode to JPG.
+	im, _ := CreateImageFromFile(test_png_relative_path) // This is tested in previous case.
+
+	im_decoded := im.Then(Decode())
+
+	// Re-encode image to jpg.
+	im_encoded := im_decoded.Then(Encode("jpg", nil))
+
+	// Check image properties.
+	if im_encoded.lastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_encoded.lastError())
+	}
+
+	if !im_encoded.IsBinary() {
+		t.Errorf("Expected image to be binary data")
+	}
+
+	// Re-encoded image should be jpg.
+	if im_encoded.Then(Decode()).ImageFormat() != "jpg" && im_encoded.Then(Decode()).ImageFormat() != "jpeg" {
+		t.Errorf("Expected image format to be jpg, got: %v", im_encoded.ImageFormat())
+	}
+
+	// Test 2: Read JPG and encode to PNG.
+	im, _ = CreateImageFromFile(test_jpg_relative_path) // This is tested in previous case.
+
+	im_decoded = im.Then(Decode())
+
+	// Re-encode image to png.
+	im_encoded = im_decoded.Then(Encode("png", nil))
+
+	// Check image properties.
+	if im_encoded.lastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_encoded.lastError())
+	}
+
+	if !im_encoded.IsBinary() {
+		t.Errorf("Expected image to be binary data")
+	}
+
+	// Re-encoded image should be png.
+	if im_encoded.Then(Decode()).ImageFormat() != "png" {
+		t.Errorf("Expected image format to be png, got: %v", im_encoded.ImageFormat())
+	}
+
+}
