@@ -8,15 +8,17 @@ import (
 	"golang.org/x/image/draw"
 )
 
-// Get resize algorithm.
+// Get resize algorithm by name.
+//
+// `Catmull-Rom` is the default algorithm, which provides the best quality.
 func resizeAlgotithm(algo string) (algorithm draw.Interpolator) {
 
-	switch strings.ToLower(algo) {
-	case "nearestneighbor":
+	switch strings.ToLower(algo) { // Convert to lower case in case of case-insensitive.
+	case "nearestneighbor": // Fastest algorithm, but worst quality.
 		algorithm = draw.NearestNeighbor
-	case "catmullrom":
+	case "catmullrom": // Default algorithm, best quality.
 		algorithm = draw.CatmullRom
-	case "approxbiLinear":
+	case "approxbiLinear": // Somehow decent quality.
 		algorithm = draw.ApproxBiLinear
 	default:
 		log.Println("[!] Using default resize algorithm 'Catmull-Rom'.")
@@ -25,23 +27,24 @@ func resizeAlgotithm(algo string) (algorithm draw.Interpolator) {
 	return
 }
 
-// Get resize algotithm.
+// Using specified resizing-factor to create resized boundary.
 //
-// Deprecated: Internal use only.
+// The output image will be `factor` times smaller than the input image.
 func createResizeBoundryByFactor(input image.Rectangle, factor float32) image.Rectangle {
 
 	resized_boundary := image.Rect(
-		0,
-		0,
-		int(float32(input.Max.X)/factor),
-		int(float32(input.Max.Y)/factor))
+		0,                                // X0
+		0,                                // Y0
+		int(float32(input.Max.X)/factor), // X1
+		int(float32(input.Max.Y)/factor)) // Y1
 
 	return resized_boundary
 }
 
 // Resize image.
 //
-// Deprecated: To keep image aspect ratio, it's not recommended to use the function directly.
+// This creates a new image with the specified boundary, and then draw the input image onto it.
+// NOTE: This is an internal function, and should not be used directly.
 func resizeImageInternal(in image.Image, algo string, boundary image.Rectangle) image.Image {
 
 	canvas := image.NewRGBA(boundary)
@@ -53,26 +56,65 @@ func resizeImageInternal(in image.Image, algo string, boundary image.Rectangle) 
 }
 
 // Resize image by specifying resized width.
-func ResizeImageByWidth(in image.Image, algo string, x int) image.Image {
+//
+// The height is automatically calculated based on the aspect ratio.
+func (in CurrentProcessingImage) ResizeImageByWidth(algo string, x int) Operation {
 
-	factor := float32(in.Bounds().Max.X) / float32(x)
-	boundary := createResizeBoundryByFactor(in.Bounds(), factor)
-	return resizeImageInternal(in, algo, boundary)
+	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
+
+		// Input should not be binary data.
+		if in.IsBinary {
+			// Return error.
+			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
+		}
+
+		// Do resize on `image.Image` instance.
+		factor := float32(in.Image.Bounds().Max.X) / float32(x)
+		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
+		resizedImage := resizeImageInternal(in.Image, algo, boundary)
+		return CurrentProcessingImage{Image: resizedImage, IsBinary: false}, nil
+	}
 }
 
 // Resize image by specifying resized height.
-func ResizeImageByHeight(in image.Image, algo string, y int) image.Image {
+//
+// The width is automatically calculated based on the aspect ratio.
+func (in CurrentProcessingImage) ResizeImageByHeight(algo string, y int) Operation {
 
-	factor := float32(in.Bounds().Max.Y) / float32(y)
-	boundary := createResizeBoundryByFactor(in.Bounds(), factor)
-	return resizeImageInternal(in, algo, boundary)
+	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
+
+		// Input should not be binary data.
+		if in.IsBinary {
+			// Return error.
+			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
+		}
+
+		// Do resize on `image.Image` instance.
+		factor := float32(in.Image.Bounds().Max.Y) / float32(y)
+		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
+		resizedImage := resizeImageInternal(in.Image, algo, boundary)
+		return CurrentProcessingImage{Image: resizedImage, IsBinary: false}, nil
+	}
 }
 
 // Resize image by specifying resize factor.
-func ResizeImageByFactor(in image.Image, algo string, factor float32) image.Image {
+//
+// The output image will be `factor` times smaller than the input image.
+func (in CurrentProcessingImage) ResizeImageByFactor(algo string, factor float32) Operation {
 
-	boundary := createResizeBoundryByFactor(in.Bounds(), factor)
-	return resizeImageInternal(in, algo, boundary)
+	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
+
+		// Input should not be binary data.
+		if in.IsBinary {
+			// Return error.
+			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
+		}
+
+		// Do resize on `image.Image` instance.
+		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
+		resizedImage := resizeImageInternal(in.Image, algo, boundary)
+		return CurrentProcessingImage{Image: resizedImage, IsBinary: false}, nil
+	}
 }
 
 /*
