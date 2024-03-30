@@ -113,7 +113,8 @@ func (profile ProfileConfig) ProcessFile(out io.Writer, in io.Reader) error {
 		ThenIf(profile.Resize.Factor != 0.0, op.ResizeImageByFactor(profile.Resize.Algorithm, profile.Resize.Factor)).
 		ThenIf((profile.Resize.Factor == 0.0) && (profile.Resize.Width != 0), op.ResizeImageByWidth(profile.Resize.Algorithm, profile.Resize.Width)).
 		ThenIf((profile.Resize.Factor == 0.0) && (profile.Resize.Width == 0) && (profile.Resize.Height != 0), op.ResizeImageByHeight(profile.Resize.Algorithm, profile.Resize.Height)).
-		Then(op.Encode(profile.Output.Format, (*op.EncoderOption)(profile.Output.Options)))
+		Then(op.Encode(profile.Output.Format, (*op.EncoderOption)(profile.Output.Options))).
+		ThenIf((profile.Output.Format == "jpeg" || profile.Output.Format == "jpg") && profile.ICC != "", op.EmbedProfile(profile.ICC)) // Supports jpeg only for now, will be extended to other formats.
 
 	if output_image.LastError() != nil {
 		return output_image.LastError()

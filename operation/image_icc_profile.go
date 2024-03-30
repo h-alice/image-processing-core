@@ -6,7 +6,7 @@ import (
 	image_parser "imagetools/image_parser"
 )
 
-func (CurrentProcessingImage) EmbedProfile(profile_name string) Operation {
+func EmbedProfile(profile_name string) Operation {
 
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
