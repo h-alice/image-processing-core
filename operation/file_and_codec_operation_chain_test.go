@@ -165,3 +165,23 @@ func TestEncoding(t *testing.T) {
 	}
 
 }
+
+func TestInvalidEncoding(t *testing.T) {
+	test_png_relative_path := "./test_resources/test_ayaya.png"
+
+	// Test : Read PNG and encode to TXT, which is not supported.
+	im, _ := CreateImageFromFile(test_png_relative_path) // This is tested in previous case.
+
+	im_decoded := im.Then(Decode())
+
+	// Re-encode image to txt, which is not supported.
+	im_encoded := im_decoded.Then(Encode("txt", nil))
+
+	// Check image properties.
+	if im_encoded.lastError() == ErrEncodingFormatNotSupported {
+		t.Logf("Expected error, got: %v", im_encoded.lastError())
+	} else {
+		t.Errorf("Expected error, got: %v", im_encoded.lastError())
+	}
+
+}
