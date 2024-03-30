@@ -62,3 +62,13 @@ func (currentImage CurrentProcessingImage) Then(operations Operation) CurrentPro
 
 	return newImage
 }
+
+// Conditioned `Then` method.
+//
+// This method will execute the operation only if the condition is met.
+func (currentImage CurrentProcessingImage) ThenIf(condition bool, operations Operation) CurrentProcessingImage {
+	if condition {
+		return currentImage.Then(operations)
+	}
+	return currentImage
+}
