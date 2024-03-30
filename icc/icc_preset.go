@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Predefined Display-P3 ICC profile compressed and base64 encoded.
 var display_p3 = `H4sIAOOBGmEC/2NgYFJJLCjIYWFgYMjNKykKcndSiIiMUmB/yMAOhLwMYgwKicnFBY4BAT5AJQww
 GhV8u8bACKIv64LMOiU1tUm1XsDXYqbw1YuvRJsY8AOulNTiZCD9B4hTkwuKShgYGFOAbOXykgIQ
 uwPIFikCOgrIngNip0PYG0DsJAj7CFhNSJAzkH0DyFZIzkgEmsH4A8jWSUIST0diQ+0FAW6XzOKC
@@ -18,6 +19,7 @@ fQYG2/3////fjRDz2s/AsBGok2snQkzDgoFBkJuB4cTOgsSiRLAQMxAzpaUxMHxazsDAG8nAIHwB
 qCe6OM3YCCzPyOPEwMB67///z2oMDOyTGRj+Tvj///ei////LgZqvsPAcCAPAJ+/MZ4kAgAA
 `
 
+// Predefined DCI-P3 ICC profile compressed and base64 encoded.
 var dci_p3 = `H4sIAKSEGmEC/2NgYFJJLCjIYWFgYMjNKykKcndSiIiMUmC/z8DFwMfAy8DBYJGYXFzgGBDgA1TC
 AKNRwbdrDIwg+rIuyKxgR76Vv87e/B1+pqSt9/1hewb8gCsltTgZSP8B4vLkgqISBgZGIGZQLi8p
 ALFnANkiRUBHAdlrQOx0CPsAiJ0EYV8BqwkJcgayXwDZAskZiSlA9g8gWycJSTwdiQ21FwRkg30D
@@ -26,6 +28,7 @@ gaEpAwMoDiCqn7JAwvZLKEKsppSBwYrj////pxFiQUA/bb3BwMAtiBBTrwR6E8g+EVCQWJQIdwDT
 zFnFacZGYDaj0DMGBs73//9/62Ng4LMCxuWJ////hPz//w9oHmM0A8Od+wBS2VCSJAIAAA==
 `
 
+// Predefined ROMM-RGB ICC profile compressed and base64 encoded.
 var romm_rgb = `H4sIABSFGmEC/2NgYDJJLCjIYWFgYMjNKykKcndSiIiMUmC/z8DFwMfAy8DBYJ6YXFzgGBDgA1TC
 AKNRwbdrDIwg+rIuyKzCJ1HPFj9NFGo8wyVrNSdtLgN+wJWSWpwMpP8AcWlyQVEJAwMjEDMol5cU
 gNgzgGyRIqCjgOw1IHY6hH0AxE6CsK+A1YQEOQPZL4BsheSMxBQGBiYOIFsnCUk8HYkNtRcEpIP8
@@ -34,6 +37,7 @@ GRhAcYAetgixMyYMDJ57QSyEmNIcBoZtdqhiHOxAgg2o16EgsSgRLMQMxIxnzkLMBAEBENFQnGZs
 BOYyojkWCx8AhPHgOTQCAAA=
 `
 
+// Predefined Adobe-RGB ICC profile compressed and base64 encoded.
 var adobe_rgb = `H4sIAJfoGmEC/2NgYDJwdHFyZRJgYMjNKykKcndSiIiMUmC/wMDBwM0gzGDMYJ2YXFzgGBDgwwAE
 efl5qQwY4Ns1BkYQfVkXZBYDaYAruaCoBEj/AWKjlNTiZAYGRgMgO7u8pAAozjgHyBZJygazN4DY
 RSFBzkD2ESCbLx3CvgJiJ0HYT0DsIqAngOwvIPXpYDYTB9gcCFsGxC5JrQDZy+CcX1BZlJmeUaJg
@@ -42,6 +46,7 @@ cPgyip1BiCFAcmlRGZTJyGRMmI8wY44EA4P/UgYGlj8IMZNeBoYFOgwM/FMRYmqGDAwC+gwM++YA
 AIzXb+0wAgAA
 `
 
+// Predefined sRGB ICC profile compressed and base64 encoded.
 var srgb = `H4sIAG+FGmEC/52Wd1RU1xaHz713eqHNMNIZepMuMID0LiAdBFEYZgYYygDDDE1siKhARBERAUWQ
 oIABo6FIrIhiISioYA9IEFBiMIqoqGRG1kp8eXnv5eX3x73f2mfvc/fZe5+1LgAkTx8uLwWWAiCZ
 J+AHejjTV4VH0LH9AAZ4gAGmADBZ6am+Qe7BQCQvNxd6usgJ/IveDAFI/L5l6OlPp4P/T9KsVL4A
