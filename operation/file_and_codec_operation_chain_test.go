@@ -52,3 +52,44 @@ func TestCreateImageFromFile(t *testing.T) {
 	}
 
 }
+
+func TestFileDecoding(t *testing.T) {
+	test_png_relative_path := "./test_resources/test_ayaya.png"
+	test_jpg_relative_path := "./test_resources/test_ayaya.jpg"
+
+	im, _ := CreateImageFromFile(test_png_relative_path) // This is tested in previous case.
+
+	im_decoded := im.Then(Decode())
+
+	// Check image properties.
+	if im_decoded.lastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_decoded.lastError())
+	}
+
+	if im_decoded.IsBinary() {
+		t.Errorf("Expected image to be image.Image instance")
+	}
+
+	if im_decoded.ImageFormat() != "png" {
+		t.Errorf("Expected image format to be png, got: %v", im_decoded.ImageFormat())
+	}
+
+	// Jpg test.
+
+	im, _ = CreateImageFromFile(test_jpg_relative_path) // This is tested in previous case.
+
+	im_decoded = im.Then(Decode())
+
+	// Check image properties.
+	if im_decoded.lastError() != nil {
+		t.Errorf("Expected no error, got: %v", im_decoded.lastError())
+	}
+
+	if im_decoded.IsBinary() {
+		t.Errorf("Expected image to be image.Image instance")
+	}
+
+	if im_decoded.ImageFormat() != "jpeg" && im_decoded.ImageFormat() != "jpg" {
+		t.Errorf("Expected image format to be jpeg, got: %v", im_decoded.ImageFormat())
+	}
+}
