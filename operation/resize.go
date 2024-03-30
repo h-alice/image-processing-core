@@ -58,12 +58,12 @@ func resizeImageInternal(in image.Image, algo string, boundary image.Rectangle) 
 // Resize image by specifying resized width.
 //
 // The height is automatically calculated based on the aspect ratio.
-func (in CurrentProcessingImage) ResizeImageByWidth(algo string, x int) Operation {
+func ResizeImageByWidth(algo string, x int) Operation {
 
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
 		// Input should not be binary data.
-		if in.IsBinary() {
+		if currentImage.IsBinary() {
 			// Change the error state.
 			currentImage.errorState = ErrOperationNotSupportInBinary
 			// Return error.
@@ -71,9 +71,9 @@ func (in CurrentProcessingImage) ResizeImageByWidth(algo string, x int) Operatio
 		}
 
 		// Do resize on `image.Image` instance.
-		factor := float32(in.Image.Bounds().Max.X) / float32(x)
-		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
-		resizedImage := resizeImageInternal(in.Image, algo, boundary)
+		factor := float32(currentImage.Image.Bounds().Max.X) / float32(x)
+		boundary := createResizeBoundryByFactor(currentImage.Image.Bounds(), factor)
+		resizedImage := resizeImageInternal(currentImage.Image, algo, boundary)
 		return CurrentProcessingImage{Image: resizedImage, isBinaryData: false}, nil
 	}
 }
@@ -81,12 +81,12 @@ func (in CurrentProcessingImage) ResizeImageByWidth(algo string, x int) Operatio
 // Resize image by specifying resized height.
 //
 // The width is automatically calculated based on the aspect ratio.
-func (in CurrentProcessingImage) ResizeImageByHeight(algo string, y int) Operation {
+func ResizeImageByHeight(algo string, y int) Operation {
 
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
 		// Input should not be binary data.
-		if in.IsBinary() {
+		if currentImage.IsBinary() {
 			// Change the error state.
 			currentImage.errorState = ErrOperationNotSupportInBinary
 			// Return error.
@@ -94,9 +94,9 @@ func (in CurrentProcessingImage) ResizeImageByHeight(algo string, y int) Operati
 		}
 
 		// Do resize on `image.Image` instance.
-		factor := float32(in.Image.Bounds().Max.Y) / float32(y)
-		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
-		resizedImage := resizeImageInternal(in.Image, algo, boundary)
+		factor := float32(currentImage.Image.Bounds().Max.Y) / float32(y)
+		boundary := createResizeBoundryByFactor(currentImage.Image.Bounds(), factor)
+		resizedImage := resizeImageInternal(currentImage.Image, algo, boundary)
 		return CurrentProcessingImage{Image: resizedImage, isBinaryData: false}, nil
 	}
 }
@@ -104,12 +104,12 @@ func (in CurrentProcessingImage) ResizeImageByHeight(algo string, y int) Operati
 // Resize image by specifying resize factor.
 //
 // The output image will be `factor` times smaller than the input image.
-func (in CurrentProcessingImage) ResizeImageByFactor(algo string, factor float32) Operation {
+func ResizeImageByFactor(algo string, factor float32) Operation {
 
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
 		// Input should not be binary data.
-		if in.IsBinary() {
+		if currentImage.IsBinary() {
 			// Change the error state.
 			currentImage.errorState = ErrOperationNotSupportInBinary
 			// Return error.
@@ -117,8 +117,8 @@ func (in CurrentProcessingImage) ResizeImageByFactor(algo string, factor float32
 		}
 
 		// Do resize on `image.Image` instance.
-		boundary := createResizeBoundryByFactor(in.Image.Bounds(), factor)
-		resizedImage := resizeImageInternal(in.Image, algo, boundary)
+		boundary := createResizeBoundryByFactor(currentImage.Image.Bounds(), factor)
+		resizedImage := resizeImageInternal(currentImage.Image, algo, boundary)
 		return CurrentProcessingImage{Image: resizedImage, isBinaryData: false}, nil
 	}
 }

@@ -13,6 +13,7 @@ type CurrentProcessingImage struct {
 	// Image binary data, or go `image.Image` instance.
 	ImageData    []byte      // The binary data.
 	Image        image.Image // The `image.Image` instance.
+	imageFormat  string      // The image format.
 	isBinaryData bool        // Flag to track if the image is binary data.
 	errorState   error       // Error state, this is used to track error in the image processing chain.
 }
@@ -23,6 +24,10 @@ func (c CurrentProcessingImage) IsBinary() bool {
 
 func (c CurrentProcessingImage) lastError() error {
 	return c.errorState
+}
+
+func (c CurrentProcessingImage) ImageFormat() string {
+	return c.imageFormat
 }
 
 // Define errors.
