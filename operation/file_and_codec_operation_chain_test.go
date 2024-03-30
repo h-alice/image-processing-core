@@ -1,7 +1,6 @@
 package operation
 
 import (
-	"fmt"
 	"os"
 	"testing"
 )
@@ -22,11 +21,34 @@ func TestPreTestTesting(t *testing.T) {
 
 func TestCreateImageFromFile(t *testing.T) {
 	test_png_relative_path := "./test_resources/test_ayaya.png"
+	test_jpg_relative_path := "./test_resources/test_ayaya.jpg"
 
 	im, err := CreateImageFromFile(test_png_relative_path)
 	if err != nil {
 		t.Errorf("Error creating image from file: %v", err)
 	}
 
-	fmt.Printf("%#v\n", im)
+	// Check basic properties.
+	if !im.IsBinary() {
+		t.Errorf("Expected image to be binary data")
+	}
+
+	if im.lastError() != nil {
+		t.Errorf("Expected no error, got: %v", im.lastError())
+	}
+
+	im, err = CreateImageFromFile(test_jpg_relative_path)
+	if err != nil {
+		t.Errorf("Error creating image from file: %v", err)
+	}
+
+	// Check basic properties.
+	if !im.IsBinary() {
+		t.Errorf("Expected image to be binary data")
+	}
+
+	if im.lastError() != nil {
+		t.Errorf("Expected no error, got: %v", im.lastError())
+	}
+
 }
