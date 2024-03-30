@@ -64,8 +64,10 @@ func (in CurrentProcessingImage) ResizeImageByWidth(algo string, x int) Operatio
 
 		// Input should not be binary data.
 		if in.IsBinary() {
+			// Change the error state.
+			currentImage.errorState = ErrOperationNotSupportInBinary
 			// Return error.
-			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
+			return currentImage, ErrOperationNotSupportInBinary
 		}
 
 		// Do resize on `image.Image` instance.
@@ -85,8 +87,10 @@ func (in CurrentProcessingImage) ResizeImageByHeight(algo string, y int) Operati
 
 		// Input should not be binary data.
 		if in.IsBinary() {
+			// Change the error state.
+			currentImage.errorState = ErrOperationNotSupportInBinary
 			// Return error.
-			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
+			return currentImage, ErrOperationNotSupportInBinary
 		}
 
 		// Do resize on `image.Image` instance.
@@ -106,8 +110,10 @@ func (in CurrentProcessingImage) ResizeImageByFactor(algo string, factor float32
 
 		// Input should not be binary data.
 		if in.IsBinary() {
+			// Change the error state.
+			currentImage.errorState = ErrOperationNotSupportInBinary
 			// Return error.
-			return CurrentProcessingImage{}, ErrOperationNotSupportInBinary
+			return currentImage, ErrOperationNotSupportInBinary
 		}
 
 		// Do resize on `image.Image` instance.
