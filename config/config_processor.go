@@ -1,7 +1,6 @@
 package config
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"image"
@@ -67,35 +66,6 @@ func (profile ProfileConfig) DoCrop(in image.Image) (image.Image, error) {
 	return in, nil
 }
 
-// Resize input image.
-func (profile ProfileConfig) DoResize(in image.Image) (image.Image, error) {
-
-	if profile.Resize == nil {
-		return in, nil // Return original image if no resize option.
-	}
-
-	var out image.Image
-	algo := profile.Resize.Algorithm
-
-	// Apply resize option.
-	switch {
-	case profile.Resize.Factor != 0.0:
-		out = op.ResizeImageByFactor(in, algo, profile.Resize.Factor)
-		return out, nil
-
-	case profile.Resize.Width != 0:
-		out = op.ResizeImageByWidth(in, algo, profile.Resize.Width)
-		return out, nil
-
-	case profile.Resize.Height != 0:
-		out = op.ResizeImageByHeight(in, algo, profile.Resize.Height)
-		return out, nil
-
-	default:
-		return nil, ErrNotImplemented
-	}
-}
-
 // Embed ICC profile to image.
 func (profile ProfileConfig) DoEmbedIcc(out io.Writer, in io.Reader) error {
 
@@ -118,39 +88,41 @@ func (profile ProfileConfig) ProcessFile(out io.Writer, in io.Reader) error {
 
 	// Procedure: Decode -> image ops -> encode -> segment ops -> write out
 
-	img, _, err := op.Decode(in)
+	working_image, err := op.CreateImageFromReader(in)
 	if err != nil {
-		log.Printf("[x] Error while decoding image: %v", err)
+		log.Printf("[x] Error while creating image: %v", err)
 		return err
 	}
 
 	// Do crop
-	img, err = profile.DoCrop(img)
-	if err != nil {
-		log.Printf("[x] Error while cropping image: %v", err)
-		return err
-	}
-
-	// Do resize
-	img, err = profile.DoResize(img)
-	if err != nil {
-		log.Printf("[x] Error while resizing image: %v", err)
-		return err
-	}
-
-	// Do encode
-	var buf bytes.Buffer
-	err = op.Encode(&buf, &img, profile.Output.Format, (*op.EncoderOption)(profile.Output.Options))
-	if err != nil {
-		log.Printf("[x] Error while encoding image: %v", err)
-		return err
-	}
+	//img, err = profile.DoCrop(img)
+	//if err != nil {
+	//	log.Printf("[x] Error while cropping image: %v", err)
+	//	return err
+	//}
 
 	// Do embed ICC
-	err = profile.DoEmbedIcc(out, &buf)
-	if err != nil {
-		log.Printf("[x] Error while embedding ICC profile: %v", err)
-		return err
+	//err = profile.DoEmbedIcc(out, &buf)
+	//if err != nil {
+	//	log.Printf("[x] Error while embedding ICC profile: %v", err)
+	//	return err
+	//}
+
+	output_image := working_image.
+		Then(op.Decode()).
+		ThenIf(profile.Resize.Factor != 0.0, op.ResizeImageByFactor(profile.Resize.Algorithm, profile.Resize.Factor)).
+		ThenIf((profile.Resize.Factor == 0.0) && (profile.Resize.Width != 0), op.ResizeImageByWidth(profile.Resize.Algorithm, profile.Resize.Width)).
+		ThenIf((profile.Resize.Factor == 0.0) && (profile.Resize.Width == 0) && (profile.Resize.Height != 0), op.ResizeImageByHeight(profile.Resize.Algorithm, profile.Resize.Height)).
+		Then(op.Encode(profile.Output.Format, (*op.EncoderOption)(profile.Output.Options)))
+
+	if output_image.LastError() != nil {
+		return output_image.LastError()
+	}
+
+	// Write output to writer.
+	output_image.Then(op.WriteImageToWriter(out))
+	if output_image.LastError() != nil {
+		return output_image.LastError()
 	}
 
 	return nil
