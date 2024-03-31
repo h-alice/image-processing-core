@@ -1,0 +1,24 @@
+# config.yaml
+profiles:
+  - profileName: "Profile1"
+    icc: "ICCProfile1"
+    resize:
+      width: 100
+      height: 200
+    output:
+      format: "jpeg"
+      nameSuffix: "_suffix1"
+      namePrefix: "prefix1_"
+      options:
+        quality: 80
+  - profileName: "Profile2"
+    icc: "ICCProfile2"
+    resize:
+      width: 300
+      height: 400
+    output:
+      format: "png"
+      nameSuffix: "_suffix2"
+      namePrefix: "prefix2_"
+      options:
+        quality: 90
