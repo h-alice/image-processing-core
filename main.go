@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"imagetools/config"
+	op "imagetools/operation"
 	"io"
 	"log"
 	"os"
@@ -48,6 +49,46 @@ func defaultProfileFilePath(profile_name string) (path string, err error) {
 	}
 
 	return profile_file, err
+}
+
+func ProcessFile(profile config.ProfileConfig, out io.Writer, in io.Reader) error {
+
+	// Procedure: Decode -> image ops -> encode -> segment ops -> write out
+
+	working_image, err := op.CreateImageFromReader(in)
+	if err != nil {
+		log.Printf("[x] Error while creating image: %v", err)
+		return err
+	}
+
+	// Do crop
+	//img, err = profile.DoCrop(img)
+	//if err != nil {
+	//	log.Printf("[x] Error while cropping image: %v", err)
+	//	return err
+	//}
+
+	output_image := working_image.
+		Then(op.Decode()).
+		ThenIf(profile.Resize.Factor != 0.0, op.ResizeImageByFactor(profile.Resize.Algorithm, profile.Resize.Factor)).
+		ThenIf((profile.Resize.Factor == 0.0) && (profile.Resize.Width != 0), op.ResizeImageByWidth(profile.Resize.Algorithm, profile.Resize.Width)).
+		ThenIf((profile.Resize.Factor == 0.0) && (profile.Resize.Width == 0) && (profile.Resize.Height != 0), op.ResizeImageByHeight(profile.Resize.Algorithm, profile.Resize.Height)).
+		Then(op.Encode(profile.Output.Format, (*op.EncoderOption)(profile.Output.Options))).
+		ThenIf((profile.Output.Format == "jpeg" || profile.Output.Format == "jpg") && profile.ICC != "", op.EmbedProfile(profile.ICC)) // Supports jpeg only for now, will be extended to other formats.
+
+	if output_image.LastError() != nil {
+		log.Printf("[x] Error while processing image: %v", output_image.LastError())
+		return output_image.LastError()
+	}
+
+	// Write output to writer.
+	output_image.Then(op.WriteImageToWriter(out))
+	if output_image.LastError() != nil {
+		log.Printf("[x] Error while writing image: %v", output_image.LastError())
+		return output_image.LastError()
+	}
+
+	return nil
 }
 
 func main() {
@@ -97,13 +138,14 @@ func main() {
 				outfile_name := pf.Output.GenerateFileName(f)
 
 				outputbuf := bytes.NewBuffer([]byte{})
-				err = pf.ProcessFile(outputbuf, bytes.NewBuffer(raw_bytes))
+				output_full_path := filepath.Join(output_dir, outfile_name)
+
+				err = ProcessFile(pf, outputbuf, bytes.NewBuffer(raw_bytes))
 				if err != nil {
 					log.Printf("[x] An error occurred while processing image: %s\n", err)
 					return
 				}
 
-				output_full_path := filepath.Join(output_dir, outfile_name)
 				ofp, err := os.OpenFile(output_full_path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 				defer func() {
 					ofp.Close()
