@@ -1,12 +1,13 @@
 package config
 
 import (
-	"encoding/json"
 	"errors"
-	op "imagetools/operation"
+	op "imagetools/operation" // Grab `EncoderOption` from operation package.
 	"os"
 	"path/filepath"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 var ErrNotImplemented = errors.New("operation not implemented")
@@ -14,10 +15,10 @@ var ErrNotImplemented = errors.New("operation not implemented")
 type OutputOptionConfig op.EncoderOption
 
 type OutputConfig struct {
-	Format     string              // Output file format
-	NameSuffix string              // Output file name suffix
-	NamePrefix string              // Output file name prefix
-	Options    *OutputOptionConfig // Encoder option
+	Format     string              `yaml:"format"`     // Output file format
+	NameSuffix string              `yaml:"nameSuffix"` // Output file name suffix
+	NamePrefix string              `yaml:"namePrefix"` // Output file name prefix
+	Options    *OutputOptionConfig `yaml:"options"`    // Encoder option
 }
 
 // Generate output file name.
@@ -44,30 +45,29 @@ func (ocf OutputConfig) GenerateFileName(input_name string) string {
 }
 
 type ResizeConfig struct {
-	Width     int     // Output image width
-	Height    int     // Output image height
-	Factor    float32 // Resize factor
-	Algorithm string  // Interpolation algorithm
+	Width     int     `yaml:"width"`     // Output image width
+	Height    int     `yaml:"height"`    // Output image height
+	Factor    float32 `yaml:"factor"`    // Resize factor
+	Algorithm string  `yaml:"algorithm"` // Resize algorithm
 }
 
-type ProfileConfig struct {
-	ProfileName string        // Profile identifier
-	ICC         string        // ICC profile to embed
-	Resize      *ResizeConfig // Resize option
-	Output      *OutputConfig // Output file configuraion
+type ProcessProfileConfig struct {
+	ProfileName string        `yaml:"profileName"` // Profile identifier
+	ICC         string        `yaml:"icc"`         // ICC profile to embed
+	Resize      *ResizeConfig `yaml:"resize"`      // Resize option
+	Output      *OutputConfig `yaml:"output"`      // Output file configuration
 }
 
 type OutputDirConfig struct {
-	DirName *string
+	DirName *string `yaml:"dirName"` // Output directory name
 }
 
 type ConfigFile struct {
-	// Output   *OutputDirConfig
-	Profiles []ProfileConfig
+	Profiles []ProcessProfileConfig `yaml:"profiles"` // List of profile configurations
 }
 
 // Load config file from path.
-func ConfigLoader(config_path string) (*ConfigFile, error) {
+func LoadConfig(config_path string) (*ConfigFile, error) {
 
 	raw_config, err := os.ReadFile(config_path) // Read raw config file.
 	if err != nil {
@@ -76,7 +76,7 @@ func ConfigLoader(config_path string) (*ConfigFile, error) {
 
 	// Converting JSON to config structure.
 	var conf ConfigFile                     // Parsed config placeholder.
-	err = json.Unmarshal(raw_config, &conf) // Convert JSON to structure.
+	err = yaml.Unmarshal(raw_config, &conf) // Convert JSON to structure.
 	if err != nil {
 		return nil, err
 	}
