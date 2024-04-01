@@ -29,7 +29,7 @@ var (
 
 type EncoderOption struct {
 	// For JPEG encoder.
-	Quality *int
+	Quality int
 }
 
 // Decode image from given `CurrentProcessingImage` instance.
@@ -81,10 +81,10 @@ func Encode(format string, opt *EncoderOption) Operation {
 		switch strings.ToLower(format) { // Convert to lower case.
 		case "jpg", "jpeg":
 			quality := 100
-			if opt.Quality == nil {
+			if opt.Quality == 0 {
 				quality = 100
 			} else {
-				quality = *opt.Quality
+				quality = opt.Quality
 			}
 
 			err := jpeg.Encode(buf, currentImage.Image, &jpeg.Options{Quality: quality})

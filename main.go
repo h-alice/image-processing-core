@@ -18,7 +18,7 @@ func defaultProfileFilePath(profile_name string) (path string, err error) {
 	if profile_name == "" {
 		profile_name = "default"
 	}
-	profile_name = fmt.Sprintf("%s.json", profile_name)
+	profile_name = fmt.Sprintf("%s.yaml", profile_name)
 
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -51,7 +51,7 @@ func defaultProfileFilePath(profile_name string) (path string, err error) {
 	return profile_file, err
 }
 
-func ProcessFile(profile config.ProfileConfig, out io.Writer, in io.Reader) error {
+func ProcessFile(profile config.ProcessProfileConfig, out io.Writer, in io.Reader) error {
 
 	// Procedure: Decode -> image ops -> encode -> segment ops -> write out
 
@@ -110,7 +110,7 @@ func main() {
 		}
 	}
 
-	conf, err := config.ConfigLoader(config_path)
+	conf, err := config.LoadConfig(config_path)
 	if err != nil {
 		log.Fatalf("[x] Cannot load config file: %s\n", err)
 	}
@@ -126,7 +126,7 @@ func main() {
 		tasks := make(chan struct{}, len(conf.Profiles))
 		for _, pf := range conf.Profiles { // Apply all profile to input image.
 
-			go func(pf config.ProfileConfig) {
+			go func(pf config.ProcessProfileConfig) {
 
 				// TODO: Output dir.
 				output_dir := filepath.Dir(f)
