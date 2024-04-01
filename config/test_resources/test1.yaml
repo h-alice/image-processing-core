@@ -1,24 +1,30 @@
-# config.yaml
+# A test file for the configuration parser.
+
 profiles:
   - profileName: "Profile1"
-    icc: "ICCProfile1"
+    icc: "ADOBE RGB"
     resize:
       width: 100
       height: 200
+      factor: 0.9
+      algorithm: "catmullrom"
     output:
       format: "jpeg"
       nameSuffix: "_suffix1"
       namePrefix: "prefix1_"
       options:
         quality: 80
+
   - profileName: "Profile2"
-    icc: "ICCProfile2"
+    icc: "DISPLAY P3"
     resize:
       width: 300
       height: 400
+      factor: 0.8
+      algorithm: "nearestneighbor"
     output:
       format: "png"
       nameSuffix: "_suffix2"
       namePrefix: "prefix2_"
       options:
-        quality: 90
+        quality: 90 # PNG quality is not used, but it's here for testing purposes.
