@@ -16,16 +16,12 @@ profiles: # This config test provides all available fields.
       options:
         quality: 80
 
-  - profileName: "Profile2"
+  - profileName: "Profile2" # This config test omit some fields.
     icc: "DISPLAY P3"
     resize:
-      width: 300
-      height: 400
-      factor: 0.8
       algorithm: "nearestneighbor"
     output:
       format: "png"
       nameSuffix: "_suffix2"
       namePrefix: "prefix2_"
       options:
-        quality: 90 # PNG quality is not used, but it's here for testing purposes.

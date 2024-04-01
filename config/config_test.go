@@ -69,4 +69,35 @@ func TestLoadConfigAndParse(t *testing.T) {
 		t.Fatalf("Expected quality to be 80, got '%d'", config.Profiles[0].Output.Options.Quality)
 	}
 
+	// Test second profile.
+
+	if config.Profiles[1].ProfileName != "Profile2" {
+		t.Fatalf("Expected profile name to be 'Profile2', got '%s'", config.Profiles[1].ProfileName)
+	}
+
+	if config.Profiles[1].Output.Format != "png" {
+		t.Fatalf("Expected format to be 'png', got '%s'", config.Profiles[1].Output.Format)
+	}
+
+	if config.Profiles[1].Output.Options != nil {
+		t.Fatalf("Expected options to be nil, got '%v'", config.Profiles[1].Output.Options)
+	}
+
+	// Config 2: Resize config (omitted some fields)
+	if config.Profiles[1].Resize.Width != 0 {
+		t.Fatalf("Expected width to be 0, got '%d'", config.Profiles[1].Resize.Width)
+	}
+
+	if config.Profiles[1].Resize.Height != 0 {
+		t.Fatalf("Expected height to be 0, got '%d'", config.Profiles[1].Resize.Height)
+	}
+
+	if config.Profiles[1].Resize.Factor != 0.0 {
+		t.Fatalf("Expected factor to be 0.0, got '%f'", config.Profiles[1].Resize.Factor)
+	}
+
+	if config.Profiles[1].Resize.Algorithm != "nearestneighbor" {
+		t.Fatalf("Expected algorithm to be 'nearestneighbor', got '%s'", config.Profiles[1].Resize.Algorithm)
+	}
+
 }
