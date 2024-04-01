@@ -18,7 +18,7 @@ func defaultProfileFilePath(profile_name string) (path string, err error) {
 	if profile_name == "" {
 		profile_name = "default"
 	}
-	profile_name = fmt.Sprintf("%s.json", profile_name)
+	profile_name = fmt.Sprintf("%s.yaml", profile_name)
 
 	home, err := os.UserHomeDir()
 	if err != nil {
