@@ -1,6 +1,7 @@
 # A test file for the configuration parser.
 
-profiles:
+
+profiles: # This config test provides all available fields.
   - profileName: "Profile1"
     icc: "ADOBE RGB"
     resize:
