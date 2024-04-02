@@ -80,14 +80,32 @@ func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (im
 	return canvas, nil
 }
 
-func Crop(input_img image.Image, crop_width int, crop_height int, alignment CropAlignment) (image.Image, error) {
+func Crop(crop_width int, crop_height int, alignment CropAlignment) Operation {
 
-	// Get the boundary of the original image.
-	original_image_boundary := input_img.Bounds()
+	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
 
-	// Calculate the cropping area boundary.
-	crop_boundary := alignment(original_image_boundary, crop_width, crop_height)
+		// Check if the input image is instance of `image.Image`.
+		if currentImage.IsBinary() {
+			// Change the error state.
+			currentImage.errorState = ErrOperationNotSupportInBinary
+			// Return error.
+			return currentImage, ErrOperationNotSupportInBinary
+		}
 
-	// Crop the image.
-	return cropImageInternal(input_img, crop_boundary)
+		// Get the boundary of the original image.
+		original_image_boundary := currentImage.Image.Bounds()
+
+		// Calculate the cropping area boundary.
+		crop_boundary := alignment(original_image_boundary, crop_width, crop_height)
+
+		cropped_image, err := cropImageInternal(currentImage.Image, crop_boundary)
+		if err != nil {
+			// Change the error state.
+			currentImage.errorState = err
+			// Return error.
+			return currentImage, err
+		}
+
+		return CurrentProcessingImage{Image: cropped_image, isBinaryData: false}, nil
+	}
 }
