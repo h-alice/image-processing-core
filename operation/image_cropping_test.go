@@ -149,3 +149,26 @@ func TestImageCroppingCenter(t *testing.T) {
 	}
 
 }
+
+func TestInvalidBoundary(t *testing.T) {
+
+	// Load image.
+	img, err := CreateImageFromFile("test_resources/test_ayaya.png")
+	if err != nil {
+		t.Fatalf("Failed to load image: %v", err)
+	}
+
+	img = img.Then(Decode())
+
+	// Test invalid boundary.
+	crop_area := image.Rect(0, 0, 100, 100)
+	_, err = cropImageInternal(img.Image, crop_area)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
+	} else if err == ErrCroppingAreaOutOfBound {
+		t.Logf("Got error as expected: %v", err)
+	} else {
+		t.Fatalf("Got unexpected error: %v", err)
+	}
+
+}
