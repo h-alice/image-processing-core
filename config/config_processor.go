@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	op "imagetools/operation" // Grab `EncoderOption` from operation package.
 	"os"
 	"path/filepath"
@@ -116,4 +117,34 @@ func LoadConfigFromFile(config_path string) (*ConfigFileRoot, error) {
 	}
 
 	return &conf, nil
+}
+
+func (pf ConfigFileRoot) ConfigPrettyPrint(config *ConfigFileRoot) string {
+
+	var output string = "" // Placeholder for output.
+
+	for _, pf := range config.Profiles { // Iterate through profiles.
+
+		output += "Profile Name: " + pf.ProfileName + "\n"
+		output += "\tICC Profile: " + pf.ICC + "\n"
+
+		if pf.Resize != nil {
+			output += "\tResizing Configuration:\n"
+			output += "\t\tResize Width: " + string(pf.Resize.Width) + "\n"
+			output += "\t\tResize Height: " + string(pf.Resize.Height) + "\n"
+			output += "\t\tResize Factor: " + fmt.Sprintf("%f.2", pf.Resize.Factor) + "\n"
+			output += "\t\tResize Algorithm: " + pf.Resize.Algorithm + "\n"
+		}
+
+		if pf.Output != nil {
+			output += "\tOutput Configuration:\n"
+			output += "\t\tOutput Format: " + pf.Output.Format + "\n"
+			output += "\t\tOutput Name Prefix: " + pf.Output.NamePrefix + "\n"
+			output += "\t\tOutput Name Suffix: " + pf.Output.NameSuffix + "\n"
+			if pf.Output.Options != nil {
+				output += "\t\tEncoder Quality: " + string(pf.Output.Options.Quality) + "\n"
+			}
+		}
+	}
+	return output
 }
