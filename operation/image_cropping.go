@@ -3,14 +3,16 @@ package operation
 import (
 	"errors"
 	"image"
+	"strings"
 
 	"golang.org/x/image/draw"
 )
 
 // Define errors.
 var (
-	ErrInvalidCropBoundary    = errors.New("invalid crop boundary")
-	ErrCroppingAreaOutOfBound = errors.New("crop boundary is outside of the original image")
+	ErrInvalidCropBoundary          = errors.New("invalid crop boundary")
+	ErrCroppingAreaOutOfBound       = errors.New("crop boundary is outside of the original image")
+	ErrAlignmentMethoudNotSupported = errors.New("alignment method not supported")
 )
 
 // Defines a prototype for crop alignment function. (e.g. Center, TopLeft, BottomRight)
@@ -60,6 +62,18 @@ func TopLeftAlignment(original_image_boundary image.Rectangle, cropped_width, cr
 	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
 }
 
+func GetAlignmentMethodByName(name string) (CropAlignment, error) {
+
+	switch strings.ToLower(name) {
+	case "center":
+		return CenterAlignment, nil
+	case "topleft":
+		return TopLeftAlignment, nil
+	default:
+		return nil, ErrAlignmentMethoudNotSupported
+	}
+}
+
 // Crop image by specifying the boundary.
 func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (image.Image, error) {
 
@@ -80,9 +94,18 @@ func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (im
 	return canvas, nil
 }
 
-func Crop(crop_width int, crop_height int, alignment CropAlignment) Operation {
+func Crop(crop_width int, crop_height int, alignment_method string) Operation {
 
 	return func(currentImage CurrentProcessingImage) (CurrentProcessingImage, error) {
+
+		// Get the alignment method by name.
+		alignment, err := GetAlignmentMethodByName(alignment_method)
+		if err != nil {
+			// Change the error state.
+			currentImage.errorState = err
+			// Return error.
+			return currentImage, err
+		}
 
 		// Check if the input image is instance of `image.Image`.
 		if currentImage.IsBinary() {
