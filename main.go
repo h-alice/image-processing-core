@@ -110,7 +110,7 @@ func main() {
 		}
 	}
 
-	conf, err := config.LoadConfig(config_path)
+	conf, err := config.LoadConfigFromFile(config_path)
 	if err != nil {
 		log.Fatalf("[x] Cannot load config file: %s\n", err)
 	}
