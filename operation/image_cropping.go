@@ -41,6 +41,25 @@ func (CropAlignment) CenterAlignment(original_image_boundary image.Rectangle, cr
 	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
 }
 
+func (CropAlignment) TopLeftAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
+
+	// This is the most common-used alignment.
+
+	// Calculate the starting point of the cropping area.
+	crop_start := image.Point{
+		X: 0,
+		Y: 0,
+	}
+
+	// Calculate the ending point of the cropping area.
+	crop_end := image.Point{
+		X: crop_start.X + cropped_width,
+		Y: crop_start.Y + cropped_height,
+	}
+
+	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
+}
+
 // Crop image by specifying the boundary.
 func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (image.Image, error) {
 
