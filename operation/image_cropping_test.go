@@ -62,7 +62,7 @@ func TestImageCroppingTopLeft(t *testing.T) {
 
 	img = img.Then(Decode())
 
-	cropped_img := img.Then(Crop(12, 13, TopLeftAlignment))
+	cropped_img := img.Then(Crop(12, 13, "topleft"))
 
 	if cropped_img.LastError() != nil {
 		t.Fatalf("Failed to crop image: %v", cropped_img.LastError())
@@ -110,7 +110,7 @@ func TestImageCroppingCenter(t *testing.T) {
 
 	img = img.Then(Decode())
 
-	cropped_img := img.Then(Crop(11, 15, CenterAlignment))
+	cropped_img := img.Then(Crop(11, 15, "center"))
 
 	if cropped_img.LastError() != nil {
 		t.Fatalf("Failed to crop image: %v", cropped_img.LastError())
