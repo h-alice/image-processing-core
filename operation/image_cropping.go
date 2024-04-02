@@ -22,8 +22,8 @@ func CenterAlignment(original_image_boundary image.Rectangle, cropped_width, cro
 
 	// Calculate the center point of the original image.
 	center := image.Point{
-		X: original_image_boundary.Dx() / 2,
-		Y: original_image_boundary.Dy() / 2,
+		X: int(original_image_boundary.Dx() / 2),
+		Y: int(original_image_boundary.Dy() / 2),
 	}
 
 	// Calculate the starting point of the cropping area.
