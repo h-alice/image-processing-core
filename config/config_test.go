@@ -6,7 +6,7 @@ import (
 
 func TestLoadConfig(t *testing.T) {
 
-	config, err := LoadConfig("test_resources/test1.yaml")
+	config, err := LoadConfigFromFile("test_resources/test1.yaml")
 	if err != nil {
 		t.Fatalf("Failed to load config: %v", err)
 	}
@@ -16,7 +16,7 @@ func TestLoadConfig(t *testing.T) {
 
 func TestLoadConfigAndParse(t *testing.T) {
 
-	config, err := LoadConfig("test_resources/test1.yaml")
+	config, err := LoadConfigFromFile("test_resources/test1.yaml")
 	if err != nil {
 		t.Fatalf("Failed to load config: %v", err)
 	}
@@ -100,4 +100,17 @@ func TestLoadConfigAndParse(t *testing.T) {
 		t.Fatalf("Expected algorithm to be 'nearestneighbor', got '%s'", config.Profiles[1].Resize.Algorithm)
 	}
 
+}
+
+func TestPrettyPrint(t *testing.T) {
+
+	// Note that this test is not deterministic.
+	// It is only used to check if the function runs without error.
+
+	config, err := LoadConfigFromFile("test_resources/test1.yaml")
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	t.Logf("Config: %s", config.PrettyPrint())
 }
