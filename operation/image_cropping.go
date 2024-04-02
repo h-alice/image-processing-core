@@ -44,6 +44,11 @@ func (CropAlignment) CenterAlignment(original_image_boundary image.Rectangle, cr
 // Crop image by specifying the boundary.
 func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (image.Image, error) {
 
+	// Check if the cropping area is inside the original image.
+	if !crop_boundary.In(input_img.Bounds()) {
+		return nil, ErrCroppingAreaOutOfBound
+	}
+
 	// Reset the boundary origin to (0, 0).
 	canvas_boundary := crop_boundary.Sub(crop_boundary.Min)
 
@@ -54,4 +59,16 @@ func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (im
 	draw.Draw(canvas, canvas_boundary, input_img, crop_boundary.Min, draw.Src)
 
 	return canvas, nil
+}
+
+func CropImage(input_img image.Image, crop_width int, crop_height int, alignment CropAlignment) (image.Image, error) {
+
+	// Get the boundary of the original image.
+	original_image_boundary := input_img.Bounds()
+
+	// Calculate the cropping area boundary.
+	crop_boundary := alignment(original_image_boundary, crop_width, crop_height)
+
+	// Crop the image.
+	return cropImageInternal(input_img, crop_boundary)
 }
