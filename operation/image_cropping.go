@@ -80,7 +80,7 @@ func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (im
 	return canvas, nil
 }
 
-func CropImage(input_img image.Image, crop_width int, crop_height int, alignment CropAlignment) (image.Image, error) {
+func Crop(input_img image.Image, crop_width int, crop_height int, alignment CropAlignment) (image.Image, error) {
 
 	// Get the boundary of the original image.
 	original_image_boundary := input_img.Bounds()
