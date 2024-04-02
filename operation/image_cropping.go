@@ -18,7 +18,7 @@ var (
 // The second and third parameters are the width and height of the cropping area, respectively.
 type CropAlignment func(image.Rectangle, int, int) image.Rectangle
 
-func (CropAlignment) CenterAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
+func CenterAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
 
 	// Calculate the center point of the original image.
 	center := image.Point{
@@ -41,7 +41,7 @@ func (CropAlignment) CenterAlignment(original_image_boundary image.Rectangle, cr
 	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
 }
 
-func (CropAlignment) TopLeftAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
+func TopLeftAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
 
 	// This is the most common-used alignment.
 
