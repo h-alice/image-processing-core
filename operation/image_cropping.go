@@ -6,14 +6,14 @@ import (
 	"golang.org/x/image/draw"
 )
 
+//type cropAlignment func(image.Rectangle, int, int) image.Rectangle
+
 // Crop image by specifying the boundary.
-func cropImageInternal(input_img image.Image, x1 int, x2 int, y1 int, y2 int) (image.Image, error) {
+func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (image.Image, error) {
 
-	crop := image.Rect(x1, y1, x2, y2)
+	canvas := image.NewRGBA(crop_boundary.Sub(crop_boundary.Min))
 
-	canvas := image.NewRGBA(crop)
-
-	draw.Draw(canvas, crop, input_img, crop.Min, draw.Over)
+	draw.Draw(canvas, crop_boundary, input_img, crop_boundary.Min, draw.Src)
 
 	return canvas, nil
 }
