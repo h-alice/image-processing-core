@@ -1,12 +1,20 @@
 package operation
 
 import (
+	"errors"
 	"image"
 
 	"golang.org/x/image/draw"
 )
 
-//type cropAlignment func(image.Rectangle, int, int) image.Rectangle
+// Define errors.
+var (
+	ErrInvalidCropBoundary    = errors.New("invalid crop boundary")
+	ErrCroppingAreaOutOfBound = errors.New("crop boundary is outside of the original image")
+)
+
+// Defines a prototype for crop alignment function. (e.g. Center, TopLeft, BottomRight)
+type cropAlignment func(image.Rectangle, int, int) image.Rectangle
 
 // Crop image by specifying the boundary.
 func cropImageInternal(input_img image.Image, crop_boundary image.Rectangle) (image.Image, error) {
