@@ -16,20 +16,22 @@ func TestImageCropping(t *testing.T) {
 	img = img.Then(Decode())
 
 	// Crop image.
-	crop_area := image.Rect(10, 10, 24, 24)
+	crop_area := image.Rect(5, 10, 20, 24)
+	t.Logf("Cropping area: %v", crop_area)
+
 	cropped_img, err := cropImageInternal(img.Image, crop_area)
-	t.Log(image.Rect(10, 10, 24, 24).Min)
 	if err != nil {
 		t.Fatalf("Failed to crop image: %v", err)
 	}
 
-	// Compare images.
-	if cropped_img.Bounds().Dx() != 14 || cropped_img.Bounds().Dy() != 14 {
+	// Check if cropped image bounds are correct.
+	if cropped_img.Bounds().Dx() != crop_area.Dx() || cropped_img.Bounds().Dy() != crop_area.Dy() {
 		t.Fatalf("Cropped image bounds are not correct: %v", cropped_img.Bounds())
 	} else {
-
 		t.Logf("Image bounds: %v", cropped_img.Bounds())
 	}
+
+	// Compare images, pixel-by-pixel.
 	for x := 0; x < cropped_img.Bounds().Dx(); x++ {
 		for y := 0; y < cropped_img.Bounds().Dy(); y++ {
 			crop_start_x := crop_area.Min.X
@@ -43,4 +45,9 @@ func TestImageCropping(t *testing.T) {
 			}
 		}
 	}
+
+	img.Image = cropped_img
+
+	// Save image.
+	img.Then(Encode("png", nil)).Then(WriteImageToFile("test_resources/test_ayaya_cropped.png"))
 }
