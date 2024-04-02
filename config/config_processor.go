@@ -123,28 +123,31 @@ func (pf ConfigFileRoot) PrettyPrint() string {
 
 	var output string = "" // Placeholder for output.
 
+	ident := "  " // Indentation.
+
 	for _, pf := range pf.Profiles { // Iterate through profiles.
 
 		output += "Profile Name: " + pf.ProfileName + "\n"
-		output += "\tICC Profile: " + pf.ICC + "\n"
+		output += ident + "ICC Profile: " + pf.ICC + "\n"
 
 		if pf.Resize != nil {
-			output += "\tResizing Configuration:\n"
-			output += "\t\tResize Width: " + fmt.Sprintf("%d", pf.Resize.Width) + "\n"
-			output += "\t\tResize Height: " + fmt.Sprintf("%d", pf.Resize.Height) + "\n"
-			output += "\t\tResize Factor: " + fmt.Sprintf("%f.2", pf.Resize.Factor) + "\n"
-			output += "\t\tResize Algorithm: " + pf.Resize.Algorithm + "\n"
+			output += ident + "Resizing Configuration:\n"
+			output += ident + ident + "Resize Width: " + fmt.Sprintf("%d", pf.Resize.Width) + "\n"
+			output += ident + ident + "Resize Height: " + fmt.Sprintf("%d", pf.Resize.Height) + "\n"
+			output += ident + ident + "Resize Factor: " + fmt.Sprintf("%f.2", pf.Resize.Factor) + "\n"
+			output += ident + ident + "Resize Algorithm: " + pf.Resize.Algorithm + "\n"
 		}
 
 		if pf.Output != nil {
-			output += "\tOutput Configuration:\n"
-			output += "\t\tOutput Format: " + pf.Output.Format + "\n"
-			output += "\t\tOutput Name Prefix: " + pf.Output.NamePrefix + "\n"
-			output += "\t\tOutput Name Suffix: " + pf.Output.NameSuffix + "\n"
+			output += ident + "Output Configuration:\n"
+			output += ident + ident + "Output Format: " + pf.Output.Format + "\n"
+			output += ident + ident + "Output Name Prefix: " + pf.Output.NamePrefix + "\n"
+			output += ident + ident + "Output Name Suffix: " + pf.Output.NameSuffix + "\n"
 			if pf.Output.Options != nil {
-				output += "\t\tEncoder Quality: " + fmt.Sprintf("%d", pf.Output.Options.Quality) + "\n"
+				output += ident + ident + "Encoder Quality: " + fmt.Sprintf("%d", pf.Output.Options.Quality) + "\n"
 			}
 		}
+		output += "\n"
 	}
 	return output
 }
