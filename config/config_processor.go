@@ -119,11 +119,11 @@ func LoadConfigFromFile(config_path string) (*ConfigFileRoot, error) {
 	return &conf, nil
 }
 
-func (pf ConfigFileRoot) PrettyPrint(config *ConfigFileRoot) string {
+func (pf ConfigFileRoot) PrettyPrint() string {
 
 	var output string = "" // Placeholder for output.
 
-	for _, pf := range config.Profiles { // Iterate through profiles.
+	for _, pf := range pf.Profiles { // Iterate through profiles.
 
 		output += "Profile Name: " + pf.ProfileName + "\n"
 		output += "\tICC Profile: " + pf.ICC + "\n"
