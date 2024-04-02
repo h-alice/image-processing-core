@@ -130,8 +130,8 @@ func (pf ConfigFileRoot) ConfigPrettyPrint(config *ConfigFileRoot) string {
 
 		if pf.Resize != nil {
 			output += "\tResizing Configuration:\n"
-			output += "\t\tResize Width: " + string(pf.Resize.Width) + "\n"
-			output += "\t\tResize Height: " + string(pf.Resize.Height) + "\n"
+			output += "\t\tResize Width: " + fmt.Sprintf("%d", pf.Resize.Width) + "\n"
+			output += "\t\tResize Height: " + fmt.Sprintf("%d", pf.Resize.Height) + "\n"
 			output += "\t\tResize Factor: " + fmt.Sprintf("%f.2", pf.Resize.Factor) + "\n"
 			output += "\t\tResize Algorithm: " + pf.Resize.Algorithm + "\n"
 		}
@@ -142,7 +142,7 @@ func (pf ConfigFileRoot) ConfigPrettyPrint(config *ConfigFileRoot) string {
 			output += "\t\tOutput Name Prefix: " + pf.Output.NamePrefix + "\n"
 			output += "\t\tOutput Name Suffix: " + pf.Output.NameSuffix + "\n"
 			if pf.Output.Options != nil {
-				output += "\t\tEncoder Quality: " + string(pf.Output.Options.Quality) + "\n"
+				output += "\t\tEncoder Quality: " + fmt.Sprintf("%d", pf.Output.Options.Quality) + "\n"
 			}
 		}
 	}
