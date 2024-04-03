@@ -10,9 +10,9 @@ import (
 
 // Define errors.
 var (
-	ErrInvalidCropBoundary          = errors.New("invalid crop boundary")
-	ErrCroppingAreaOutOfBound       = errors.New("crop boundary is outside of the original image")
-	ErrAlignmentMethoudNotSupported = errors.New("alignment method not supported")
+	ErrInvalidCropBoundary         = errors.New("invalid crop boundary")
+	ErrCroppingAreaOutOfBound      = errors.New("crop boundary is outside of the original image")
+	ErrAlignmentMethodNotSupported = errors.New("alignment method not supported")
 )
 
 // Defines a prototype for crop alignment function. (e.g. Center, TopLeft, BottomRight)
@@ -70,7 +70,7 @@ func GetAlignmentMethodByName(name string) (CropAlignment, error) {
 	case "topleft":
 		return TopLeftAlignment, nil
 	default:
-		return nil, ErrAlignmentMethoudNotSupported
+		return nil, ErrAlignmentMethodNotSupported
 	}
 }
 
