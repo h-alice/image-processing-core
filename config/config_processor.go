@@ -119,6 +119,7 @@ func LoadConfigFromFile(config_path string) (*ConfigFileRoot, error) {
 	return &conf, nil
 }
 
+// Pretty print config file.
 func (pf ConfigFileRoot) PrettyPrint() string {
 
 	var output string = "" // Placeholder for output.
