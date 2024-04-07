@@ -39,7 +39,7 @@ func defaultProfileFilePath(profile_name string) (path string, err error) {
 			}
 
 			// Writing default profile.
-			err = os.WriteFile(profile_file, []byte(default_profile), 0777)
+			err = os.WriteFile(profile_file, []byte(config.GenerateDefaultConfig()), 0777)
 			if err != nil {
 				return "", err
 			}
@@ -178,5 +178,3 @@ func main() {
 		}
 	}
 }
-
-var default_profile string = `{"profiles": []}`
