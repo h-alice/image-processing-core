@@ -97,3 +97,31 @@ func (profile_root ConfigFileRoot) ToYaml() string {
 
 	return string(yaml_str)
 }
+
+// Generate a config that does nothing to input image.
+func GenerateDefaultConfig() string {
+
+	// Default config.
+	default_config := ConfigFileRoot{
+		Profiles: []ProcessProfileConfig{
+			{
+				ProfileName: "SampleProfile",
+				ICC:         "",
+				Resize: &ResizeConfig{
+					Factor:    1.0,
+					Algorithm: "nearestneighbor",
+				},
+				Output: &OutputConfig{
+					Format:     "jpg",
+					NameSuffix: "",
+					NamePrefix: "",
+					Options: &OutputOptionConfig{
+						Quality: 100,
+					},
+				},
+			},
+		},
+	}
+
+	return default_config.ToYaml()
+}
