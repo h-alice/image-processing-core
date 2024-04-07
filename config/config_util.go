@@ -85,3 +85,15 @@ func (pf ConfigFileRoot) PrettyPrint() string {
 	}
 	return output
 }
+
+// Profile instance to yaml string.
+func (profile_root ConfigFileRoot) ToYaml() string {
+
+	// Convert to yaml.
+	yaml_str, err := yaml.Marshal(profile_root)
+	if err != nil {
+		return ""
+	}
+
+	return string(yaml_str)
+}
