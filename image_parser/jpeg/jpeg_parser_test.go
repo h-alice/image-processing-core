@@ -3,7 +3,7 @@ package jpeg_parser_test
 import (
 	"bytes"
 	"fmt"
-	. "imagetools/image_parser/jpeg"
+	. "imagecore/image_parser/jpeg"
 	"io"
 	"log"
 	"os"
