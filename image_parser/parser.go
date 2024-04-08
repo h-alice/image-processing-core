@@ -3,7 +3,7 @@ package image_parser
 import (
 	"bytes"
 	"errors"
-	jpeg_parser "imagetools/image_parser/jpeg"
+	jpeg_parser "imagecore/image_parser/jpeg"
 	"io"
 )
 

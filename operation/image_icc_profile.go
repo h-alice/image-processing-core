@@ -2,8 +2,8 @@ package operation
 
 import (
 	"bytes"
-	icc "imagetools/icc"
-	image_parser "imagetools/image_parser"
+	icc "imagecore/icc"
+	image_parser "imagecore/image_parser"
 )
 
 func EmbedProfile(profile_name string) Operation {

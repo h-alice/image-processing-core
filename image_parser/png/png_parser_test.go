@@ -2,13 +2,13 @@ package png_parser_test
 
 import (
 	"bytes"
-	. "imagetools/image_parser/png"
+	. "imagecore/image_parser/png"
 	"log"
 	"os"
 	"testing"
 )
 
-func load_test_case(c string) []byte {
+func LoadTestCase(c string) []byte {
 	fname := ""
 	switch c {
 
