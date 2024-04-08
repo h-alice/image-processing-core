@@ -12,45 +12,6 @@ import (
 	"path/filepath"
 )
 
-// Get profile from home directory.
-func defaultProfileFilePath(profile_name string) (path string, err error) {
-
-	if profile_name == "" {
-		profile_name = "default"
-	}
-	profile_name = fmt.Sprintf("%s.yaml", profile_name)
-
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-
-	profile_dir := filepath.Join(home, ".imgtools")
-	profile_file := filepath.Join(home, ".imgtools", profile_name)
-
-	_, err = os.Stat(profile_dir)
-	if err != nil {
-		if os.IsNotExist(err) {
-
-			// Making profile directory if not exists.
-			err = os.Mkdir(profile_dir, 0777)
-			if err != nil {
-				return "", err
-			}
-
-			// Writing default profile.
-			err = os.WriteFile(profile_file, []byte(config.GenerateDefaultConfig()), 0777)
-			if err != nil {
-				return "", err
-			}
-		} else {
-			return "", err
-		}
-	}
-
-	return profile_file, err
-}
-
 func ProcessFile(profile config.ProcessProfileConfig, out io.Writer, in io.Reader) error {
 
 	// Procedure: Decode -> image ops -> encode -> segment ops -> write out
@@ -104,7 +65,7 @@ func main() {
 		log.Printf("[!] Using default config file.")
 
 		var err error
-		config_path, err = defaultProfileFilePath("default")
+		config_path, err = getProfileFromHomeDir("default", true)
 		if err != nil {
 			log.Fatalf("[x] Error while getting default config: %s\n", err)
 		}
