@@ -8,6 +8,12 @@ import (
 	"golang.org/x/image/draw"
 )
 
+// Define constants.
+const (
+	CropAlignmentCenter  = "center"
+	CropAlignmentTopLeft = "topleft"
+)
+
 // Define errors.
 var (
 	ErrInvalidCropBoundary         = errors.New("invalid crop boundary")
@@ -65,9 +71,9 @@ func TopLeftAlignment(original_image_boundary image.Rectangle, cropped_width, cr
 func GetAlignmentMethodByName(name string) (CropAlignment, error) {
 
 	switch strings.ToLower(name) {
-	case "center":
+	case CropAlignmentCenter:
 		return CenterAlignment, nil
-	case "topleft":
+	case CropAlignmentTopLeft:
 		return TopLeftAlignment, nil
 	default:
 		return nil, ErrAlignmentMethodNotSupported
