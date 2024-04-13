@@ -18,7 +18,7 @@ func resizeAlgotithm(algo string) (algorithm draw.Interpolator) {
 		algorithm = draw.NearestNeighbor
 	case "catmullrom": // Default algorithm, best quality.
 		algorithm = draw.CatmullRom
-	case "approxbiLinear": // Somehow decent quality.
+	case "approxbilinear": // Somehow decent quality.
 		algorithm = draw.ApproxBiLinear
 	default:
 		log.Println("[!] Using default resize algorithm 'Catmull-Rom'.")
