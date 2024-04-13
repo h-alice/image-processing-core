@@ -68,6 +68,57 @@ func TopLeftAlignment(original_image_boundary image.Rectangle, cropped_width, cr
 	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
 }
 
+func BottomLeftAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
+
+	// Calculate the starting point of the cropping area.
+	crop_start := image.Point{
+		X: 0,
+		Y: original_image_boundary.Dy() - cropped_height,
+	}
+
+	// Calculate the ending point of the cropping area.
+	crop_end := image.Point{
+		X: crop_start.X + cropped_width,
+		Y: crop_start.Y + cropped_height,
+	}
+
+	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
+}
+
+func TopRightAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
+
+	// Calculate the starting point of the cropping area.
+	crop_start := image.Point{
+		X: original_image_boundary.Dx() - cropped_width,
+		Y: 0,
+	}
+
+	// Calculate the ending point of the cropping area.
+	crop_end := image.Point{
+		X: crop_start.X + cropped_width,
+		Y: crop_start.Y + cropped_height,
+	}
+
+	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
+}
+
+func BottomRightAlignment(original_image_boundary image.Rectangle, cropped_width, cropped_height int) image.Rectangle {
+
+	// Calculate the starting point of the cropping area.
+	crop_start := image.Point{
+		X: original_image_boundary.Dx() - cropped_width,
+		Y: original_image_boundary.Dy() - cropped_height,
+	}
+
+	// Calculate the ending point of the cropping area.
+	crop_end := image.Point{
+		X: crop_start.X + cropped_width,  // Note that it will equal to original_image_boundary.Dx()
+		Y: crop_start.Y + cropped_height, // Note that it will equal to original_image_boundary.Dy()
+	}
+
+	return image.Rect(crop_start.X, crop_start.Y, crop_end.X, crop_end.Y)
+}
+
 func GetAlignmentMethodByName(name string) (CropAlignment, error) {
 
 	switch strings.ToLower(name) {
