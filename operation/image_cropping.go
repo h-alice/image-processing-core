@@ -10,8 +10,11 @@ import (
 
 // Define constants.
 const (
-	CropAlignmentCenter  = "center"
-	CropAlignmentTopLeft = "topleft"
+	CropAlignmentCenter      = "center"
+	CropAlignmentTopLeft     = "topleft"
+	CropAlignmentBottomLeft  = "bottomleft"
+	CropAlignmentTopRight    = "topright"
+	CropAlignmentBottomRight = "bottomright"
 )
 
 // Define errors.
@@ -126,6 +129,12 @@ func GetAlignmentMethodByName(name string) (CropAlignment, error) {
 		return CenterAlignment, nil
 	case CropAlignmentTopLeft:
 		return TopLeftAlignment, nil
+	case CropAlignmentBottomLeft:
+		return BottomLeftAlignment, nil
+	case CropAlignmentTopRight:
+		return TopRightAlignment, nil
+	case CropAlignmentBottomRight:
+		return BottomRightAlignment, nil
 	default:
 		return nil, ErrAlignmentMethodNotSupported
 	}
